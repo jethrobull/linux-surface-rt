@@ -10,9 +10,6 @@
 /* Core regulator cannot work with UEFI, delete it */
 /delete-node/ &vdd_core;
 
-/* L2 cache does not work yet */
-/delete-node/ &cache_controller;
-
 / {
 	compatible = "microsoft,surface-rt-efi", "microsoft,surface-rt", "nvidia,tegra30";
 
@@ -22,6 +19,15 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 		regulator-always-on;
+	};
+
+	firmware {
+		trusted-foundations {
+			compatible = "tlm,trusted-foundations";
+			tlm,version-major = <0x0>;
+			tlm,version-minor = <0x0>;
+			tlm,microsoft-surface-rt;
+		};
 	};
 };
 
