@@ -891,15 +891,33 @@ tegra124_clk_register_emc(void __iomem *base, struct device_node *np,
 
 static inline bool tegra124_clk_emc_driver_available(struct clk_hw *emc_hw)
 {
+        return false;
+}
+#endif
+
+#ifdef CONFIG_TEGRA114_CLK_EMC
+struct clk *tegra114_clk_register_emc(void __iomem *base, struct device_node *np,
+                                      spinlock_t *lock);
+bool tegra114_clk_emc_driver_available(struct clk_hw *emc_hw);
+#else
+static inline struct clk *
+tegra114_clk_register_emc(void __iomem *base, struct device_node *np,
+                          spinlock_t *lock)
+{
+        return NULL;
+}
+
+static inline bool tegra114_clk_emc_driver_available(struct clk_hw *emc_hw)
+{
 	return false;
 }
 #endif
 
-void tegra114_clock_tune_cpu_trimmers_high(void);
-void tegra114_clock_tune_cpu_trimmers_low(void);
-void tegra114_clock_tune_cpu_trimmers_init(void);
-void tegra114_clock_assert_dfll_dvco_reset(void);
-void tegra114_clock_deassert_dfll_dvco_reset(void);
+//void tegra114_clock_tune_cpu_trimmers_high(void);
+//void tegra114_clock_tune_cpu_trimmers_low(void);
+//void tegra114_clock_tune_cpu_trimmers_init(void);
+//void tegra114_clock_assert_dfll_dvco_reset(void);
+//void tegra114_clock_deassert_dfll_dvco_reset(void);
 
 typedef void (*tegra_clk_apply_init_table_func)(void);
 extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;

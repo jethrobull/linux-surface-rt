@@ -171,7 +171,7 @@
 
 		state_default: pinmux {
 			/* UART A RX ??? */
-/*
+
 			sdmmc3_cmd_pa7 {
 				nvidia,pins = "sdmmc3_cmd_pa7";
 				nvidia,function = "uarta";
@@ -180,9 +180,9 @@
 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
 			};
 
-*/
+
 			/* UART A TX */
-/*
+
 			sdmmc3_dat1_pb6 {
 				nvidia,pins = "sdmmc3_dat1_pb6";
 				nvidia,function = "uarta";
@@ -191,7 +191,7 @@
 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 			};
 
-*/
+
 			panel-backlight {
 				nvidia,pins = "gmi_ad8_ph0";
 				nvidia,function = "pwm0";
@@ -692,7 +692,7 @@
 
 	/* SD - SDMMC-3 */
 	mmc@78000400 {
-		status = "okay"; // disable uart in UEFI stub
+		status = "disabled"; // disable uart in UEFI stub
 		bus-width = <4>;
 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
 		vqmmc-supply = <&tps65913_ldo9>; // io voltage

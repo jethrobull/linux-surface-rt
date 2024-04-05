@@ -611,10 +611,10 @@
 
 	dfll: clock@70110000 {
 		compatible = "nvidia,tegra114-dfll";
-		reg = <0 0x70110000 0 0x100>, /* DFLL control */
-		      <0 0x70110000 0 0x100>, /* I2C output control */
-		      <0 0x70110100 0 0x100>, /* Integrated I2C controller */
-		      <0 0x70110200 0 0x100>; /* Look-up table RAM */
+		reg = <0x70110000 0x100>, /* DFLL control */
+		      <0x70110000 0x100>, /* I2C output control */
+		      <0x70110100 0x100>, /* Integrated I2C controller */
+		      <0x70110200 0x100>; /* Look-up table RAM */
 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
 		clocks = <&tegra_car TEGRA114_CLK_DFLL_SOC>,
 			 <&tegra_car TEGRA114_CLK_DFLL_REF>,

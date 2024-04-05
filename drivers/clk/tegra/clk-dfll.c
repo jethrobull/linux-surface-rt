@@ -1963,6 +1963,7 @@ int tegra_dfll_register(struct platform_device *pdev,
 	}
 
 	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
+
 	if (IS_ERR(td->dvco_rst)) {
 		dev_err(td->dev, "couldn't get dvco reset\n");
 		return PTR_ERR(td->dvco_rst);
@@ -2001,6 +2002,8 @@ int tegra_dfll_register(struct platform_device *pdev,
 		return -ENODEV;
 	}
 
+	dev_info(td->dev, " mem start = %x \n",mem->start);
+dev_info(td->dev, " resource_size mem = %u \n",resource_size(mem));
 	td->base = devm_ioremap(td->dev, mem->start, resource_size(mem));
 	if (!td->base) {
 		dev_err(td->dev, "couldn't ioremap DFLL control registers\n");
