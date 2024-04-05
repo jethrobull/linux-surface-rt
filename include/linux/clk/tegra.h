@@ -152,6 +152,13 @@ typedef long (tegra20_clk_emc_round_cb)(unsigned long rate,
 					unsigned long min_rate,
 					unsigned long max_rate,
 					void *arg);
+
+typedef int (tegra114_emc_prepare_timing_change_cb)(struct tegra_emc *emc,
+						    unsigned long rate);
+
+typedef void (tegra114_emc_complete_timing_change_cb)(struct tegra_emc *emc,
+						      unsigned long rate);
+
 typedef int (tegra124_emc_prepare_timing_change_cb)(struct tegra_emc *emc,
 						    unsigned long rate);
 typedef void (tegra124_emc_complete_timing_change_cb)(struct tegra_emc *emc,
@@ -192,6 +199,17 @@ static inline int
 tegra20_clk_prepare_emc_mc_same_freq(struct clk *emc_clk, bool same)
 {
 	return 0;
+}
+#endif
+
+#ifdef CONFIG_TEGRA114_CLK_EMC
+void tegra114_clk_set_emc_callbacks(tegra114_emc_prepare_timing_change_cb *prep_cb,
+                                    tegra114_emc_complete_timing_change_cb *complete_cb);
+#else
+static inline void
+tegra114_clk_set_emc_callbacks(tegra114_emc_prepare_timing_change_cb *prep_cb,
+                               tegra114_emc_complete_timing_change_cb *complete_cb)
+{
 }
 #endif
 
