@@ -1,27 +1,27 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /*
- * This header provides constants for binding nvidia,tegra114-car.
+ * This header provides constants for binding nvidia,tegra114-car or
+ * nvidia,tegra132-car.
  *
- * The first 160 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
+ * The first 192 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
  * registers. These IDs often match those in the CAR's RST_DEVICES registers,
  * but not in all cases. Some bits in CLK_OUT_ENB affect multiple clocks. In
- * this case, those clocks are assigned IDs above 160 in order to highlight
+ * this case, those clocks are assigned IDs above 185 in order to highlight
  * this issue. Implementations that interpret these clock IDs as bit values
  * within the CLK_OUT_ENB or RST_DEVICES registers should be careful to
  * explicitly handle these special cases.
  *
- * The balance of the clocks controlled by the CAR are assigned IDs of 160 and
+ * The balance of the clocks controlled by the CAR are assigned IDs of 185 and
  * above.
  */
-#include <dt-bindings/clock/tegra114-car-common.h>
 
-#ifndef _DT_BINDINGS_CLOCK_TEGRA114_CAR_H
-#define _DT_BINDINGS_CLOCK_TEGRA114_CAR_H
+#ifndef _DT_BINDINGS_CLOCK_TEGRA114_CAR_COMMON_H
+#define _DT_BINDINGS_CLOCK_TEGRA114_CAR_COMMON_H
 
 /* 0 */
 /* 1 */
 /* 2 */
-/* 3 */
+#define TEGRA114_CLK_ISPB 3
 #define TEGRA114_CLK_RTC 4
 #define TEGRA114_CLK_TIMER 5
 #define TEGRA114_CLK_UARTA 6
@@ -31,18 +31,17 @@
 /* 10 (register bit affects spdif_in and spdif_out) */
 #define TEGRA114_CLK_I2S1 11
 #define TEGRA114_CLK_I2C1 12
-#define TEGRA114_CLK_NDFLASH 13
+/* 13 */
 #define TEGRA114_CLK_SDMMC1 14
 #define TEGRA114_CLK_SDMMC4 15
 /* 16 */
 #define TEGRA114_CLK_PWM 17
 #define TEGRA114_CLK_I2S2 18
-#define TEGRA114_CLK_EPP 19
 /* 20 (register bit affects vi and vi_sensor) */
-#define TEGRA114_CLK_GR2D 21
+/* 21 */
 #define TEGRA114_CLK_USBD 22
 #define TEGRA114_CLK_ISP 23
-#define TEGRA114_CLK_GR3D 24
+/* 26 */
 /* 25 */
 #define TEGRA114_CLK_DISP2 26
 #define TEGRA114_CLK_DISP1 27
@@ -90,9 +89,9 @@
 #define TEGRA114_CLK_I2C3 67
 #define TEGRA114_CLK_SBC4 68
 #define TEGRA114_CLK_SDMMC3 69
-/* 70 */
+#define TEGRA114_CLK_PCIE 70
 #define TEGRA114_CLK_OWR 71
-/* 72 */
+#define TEGRA114_CLK_AFI 72
 #define TEGRA114_CLK_CSITE 73
 /* 74 */
 /* 75 */
@@ -100,7 +99,7 @@
 #define TEGRA114_CLK_TRACE 77
 #define TEGRA114_CLK_SOC_THERM 78
 #define TEGRA114_CLK_DTV 79
-#define TEGRA114_CLK_NDSPEED 80
+/* 80 */
 #define TEGRA114_CLK_I2CSLOW 81
 #define TEGRA114_CLK_DSIB 82
 #define TEGRA114_CLK_TSEC 83
@@ -144,14 +143,14 @@
 #define TEGRA114_CLK_EXTERN1 120
 #define TEGRA114_CLK_EXTERN2 121
 #define TEGRA114_CLK_EXTERN3 122
-/* 123 */
-/* 124 */
+#define TEGRA114_CLK_SATA_OOB 123
+#define TEGRA114_CLK_SATA 124
 #define TEGRA114_CLK_HDA 125
 /* 126 */
 #define TEGRA114_CLK_SE 127
 
 #define TEGRA114_CLK_HDA2HDMI 128
-/* 129 */
+#define TEGRA114_CLK_SATA_COLD 129
 /* 130 */
 /* 131 */
 /* 132 */
@@ -172,7 +171,7 @@
 #define TEGRA114_CLK_CILE 146
 #define TEGRA114_CLK_DSIALP 147
 #define TEGRA114_CLK_DSIBLP 148
-/* 149 */
+#define TEGRA114_CLK_ENTROPY 149
 #define TEGRA114_CLK_DDS 150
 /* 151 */
 #define TEGRA114_CLK_DP2 152
@@ -190,33 +189,32 @@
 /* 163 */
 /* 164 */
 /* 165 */
-/* 166 */
+#define TEGRA114_CLK_I2C6 166
 /* 167 */
 /* 168 */
 /* 169 */
 /* 170 */
-/* 171 */
+#define TEGRA114_CLK_VIM2_CLK 171
 /* 172 */
 /* 173 */
 /* 174 */
 /* 175 */
-/* 176 */
-/* 177 */
-/* 178 */
+#define TEGRA114_CLK_HDMI_AUDIO 176
+#define TEGRA114_CLK_CLK72MHZ 177
+#define TEGRA114_CLK_VIC03 178
 /* 179 */
-/* 180 */
-/* 181 */
-/* 182 */
+#define TEGRA114_CLK_ADX1 180
+#define TEGRA114_CLK_DPAUX 181
+#define TEGRA114_CLK_SOR0 182
 /* 183 */
-/* 184 */
-/* 185 */
+#define TEGRA114_CLK_GPU 184
+#define TEGRA114_CLK_AMX1 185
 /* 186 */
 /* 187 */
 /* 188 */
 /* 189 */
 /* 190 */
 /* 191 */
-
 #define TEGRA114_CLK_UARTB 192
 #define TEGRA114_CLK_VFIR 193
 #define TEGRA114_CLK_SPDIF_IN 194
@@ -255,11 +253,11 @@
 #define TEGRA114_CLK_PLL_U_60M 224
 #define TEGRA114_CLK_PLL_U_48M 225
 #define TEGRA114_CLK_PLL_U_12M 226
-#define TEGRA114_CLK_PLL_X 227
-#define TEGRA114_CLK_PLL_X_OUT0 228
+/* 227 */
+/* 228 */
 #define TEGRA114_CLK_PLL_RE_VCO 229
 #define TEGRA114_CLK_PLL_RE_OUT 230
-#define TEGRA114_CLK_PLL_E_OUT0 231
+#define TEGRA114_CLK_PLL_E 231
 #define TEGRA114_CLK_SPDIF_IN_SYNC 232
 #define TEGRA114_CLK_I2S0_SYNC 233
 #define TEGRA114_CLK_I2S1_SYNC 234
@@ -291,18 +289,18 @@
 #define TEGRA114_CLK_SCLK 259
 #define TEGRA114_CLK_HCLK 260
 #define TEGRA114_CLK_PCLK 261
-#define TEGRA114_CLK_CCLK_G 262
-#define TEGRA114_CLK_CCLK_LP 263
+/* 262 */
+/* 263 */
 #define TEGRA114_CLK_DFLL_REF 264
 #define TEGRA114_CLK_DFLL_SOC 265
-/* 266 */
-/* 267 */
-/* 268 */
-/* 269 */
-/* 270 */
-/* 271 */
-/* 272 */
-/* 273 */
+#define TEGRA114_CLK_VI_SENSOR2 266
+#define TEGRA114_CLK_PLL_P_OUT5 267
+#define TEGRA114_CLK_CML0 268
+#define TEGRA114_CLK_CML1 269
+#define TEGRA114_CLK_PLL_C4 270
+#define TEGRA114_CLK_PLL_DP 271
+#define TEGRA114_CLK_PLL_E_MUX 272
+#define TEGRA114_CLK_PLL_D_DSI_OUT 273
 /* 274 */
 /* 275 */
 /* 276 */
@@ -339,9 +337,13 @@
 /* 306 */
 /* 307 */
 /* 308 */
-#define TEGRA114_CLK_DSIA_MUX 309
-#define TEGRA114_CLK_DSIB_MUX 310
-#define TEGRA114_CLK_XUSB_SS_DIV2 311
-#define TEGRA114_CLK_CLK_MAX 312
+/* 309 */
+/* 310 */
+#define TEGRA114_CLK_SOR0_LVDS 311 /* deprecated */
+#define TEGRA114_CLK_SOR0_OUT 311
+#define TEGRA114_CLK_XUSB_SS_DIV2 312
 
-#endif	/* _DT_BINDINGS_CLOCK_TEGRA114_CAR_H */
+#define TEGRA114_CLK_PLL_M_UD 313
+#define TEGRA114_CLK_PLL_C_UD 314
+
+#endif	/* _DT_BINDINGS_CLOCK_TEGRA114_CAR_COMMON_H */

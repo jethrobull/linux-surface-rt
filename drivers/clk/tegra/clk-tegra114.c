@@ -11,6 +11,7 @@
 #include <linux/export.h>
 #include <linux/clk/tegra.h>
 #include <dt-bindings/clock/tegra114-car.h>
+#include <dt-bindings/reset/tegra114-car.h>
 
 #include "clk.h"
 #include "clk-id.h"
@@ -1303,6 +1304,27 @@ void tegra114_clock_deassert_dfll_dvco_reset(void)
 }
 EXPORT_SYMBOL(tegra114_clock_deassert_dfll_dvco_reset);
 
+static int tegra114_reset_assert(unsigned long id)
+{
+        if (id == TEGRA114_RST_DFLL_DVCO)
+                tegra114_clock_assert_dfll_dvco_reset();
+        else
+                return -EINVAL;
+
+        return 0;
+}
+
+static int tegra114_reset_deassert(unsigned long id)
+{
+        if (id == TEGRA114_RST_DFLL_DVCO)
+                tegra114_clock_deassert_dfll_dvco_reset();
+        else
+                return -EINVAL;
+
+        return 0;
+}
+
+
 static void __init tegra114_clock_init(struct device_node *np)
 {
 	struct device_node *node;
@@ -1353,5 +1375,8 @@ static void __init tegra114_clock_init(struct device_node *np)
 	tegra_clk_apply_init_table = tegra114_clock_apply_init_table;
 
 	tegra_cpu_car_ops = &tegra114_cpu_car_ops;
+
+        tegra_init_special_resets(1, tegra114_reset_assert,
+                                  tegra114_reset_deassert);
 }
 CLK_OF_DECLARE(tegra114, "nvidia,tegra114-car", tegra114_clock_init);
