@@ -24,6 +24,13 @@
 		stdout-path = "serial0:115200n8";
 	};
 
+	/* CPU DFLL clock */
+	clock@70110000 {
+		status = "okay";
+		nvidia,i2c-fs-rate = <400000>;
+		vdd-cpu-supply = <&reg_vdd_cpu>;
+	};
+
 	clk32k_in: clock-32 {
 		compatible = "fixed-clock";
 		clock-frequency = <32768>;
@@ -739,6 +746,38 @@
 	cpus {
 		cpu@0 {
 			vdd-cpu-supply = <&reg_vdd_cpu>;
+		};
+	};
+
+	thermal-zones {
+		cpu-thermal {
+			trips {
+				cpu-shutdown-trip {
+					temperature = <101000>;
+					hysteresis = <0>;
+					type = "critical";
+				};
+			};
+		};
+
+		mem-thermal {
+			trips {
+				mem-shutdown-trip {
+					temperature = <101000>;
+					hysteresis = <0>;
+					type = "critical";
+				};
+			};
+		};
+
+		gpu-thermal {
+			trips {
+				gpu-shutdown-trip {
+					temperature = <101000>;
+					hysteresis = <0>;
+					type = "critical";
+				};
+			};
 		};
 	};
 
