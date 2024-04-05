@@ -1010,6 +1010,14 @@ efi_status_t handle_cmdline_files(efi_loaded_image_t *image,
 				  unsigned long *load_addr,
 				  unsigned long *load_size);
 
+efi_status_t efi_open_read_cmdline_from_file(efi_loaded_image_t *image);
+
+static inline efi_status_t efi_read_cmdline_from_file(efi_loaded_image_t *image) {
+	return efi_open_read_cmdline_from_file(image);
+}
+
+
+
 
 static inline efi_status_t efi_load_dtb(efi_loaded_image_t *image,
 					unsigned long *load_addr,

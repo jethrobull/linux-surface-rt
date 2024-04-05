@@ -116,6 +116,16 @@ efi_status_t efi_handle_cmdline(efi_loaded_image_t *image, char **cmdline_ptr)
 	efi_status_t status;
 	char *cmdline;
 
+	/* Load cmdline parameters like dtb=, initrd=, root= from file.
+	 * The file is called "cmdline.txt" and should be located next to the kernel.
+	 * This will override the cmdline passed by bootloader.
+	 */
+
+	status = efi_read_cmdline_from_file(image);
+	if (status != EFI_SUCCESS) {
+		efi_info("Unable to read cmdline parameters from file\n");
+	}
+
 	/*
 	 * Get the command line from EFI, using the LOADED_IMAGE
 	 * protocol. We are going to copy the command line into the
