@@ -30,10 +30,10 @@ struct dfll_fcpu_data {
 
 /* Maximum CPU frequency, indexed by CPU speedo id */
 static const unsigned long tegra114_cpu_max_freq_table[] = {
-	[0] = 2014500000UL,
-	[1] = 2320500000UL,
-	[2] = 2116500000UL,
-	[3] = 2524500000UL,
+	[0] = 1714500000UL,
+	[1] = 1720500000UL,
+	[2] = 1716500000UL,
+	[3] = 1724500000UL,
 };
 
 static const struct cvb_table tegra114_cpu_cvb_tables[] = {
