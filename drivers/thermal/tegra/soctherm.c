@@ -31,6 +31,7 @@
 #include <linux/reset.h>
 #include <linux/thermal.h>
 
+#include <dt-bindings/thermal/tegra114-soctherm.h>
 #include <dt-bindings/thermal/tegra124-soctherm.h>
 
 #include "../thermal_core.h"
@@ -2052,6 +2053,12 @@ static void soctherm_init(struct platform_device *pdev)
 }
 
 static const struct of_device_id tegra_soctherm_of_match[] = {
+#ifdef CONFIG_ARCH_TEGRA_114_SOC
+        {
+                .compatible = "nvidia,tegra114-soctherm",
+                .data = &tegra114_soctherm,
+        },
+#endif
 #ifdef CONFIG_ARCH_TEGRA_124_SOC
 	{
 		.compatible = "nvidia,tegra124-soctherm",
