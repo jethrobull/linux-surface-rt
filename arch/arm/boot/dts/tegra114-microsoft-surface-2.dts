@@ -800,5 +800,73 @@
 		regulator-enable-ramp-delay = <70000>; // 70ms from ACPI
 		gpio = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
 	};
+
+	padctl@7009f000 {
+		avdd-pll-utmip-supply = <&tps65913_smps8>;
+		avdd-pll-erefe-supply = <&tps65913_smps9>;
+		avdd-pex-pll-supply = <&tps65913_smps9>;
+		hvdd-pex-pll-e-supply = <&ldousb>;
+
+		pads {
+			usb2 {
+				status = "okay";
+
+				lanes {
+					usb2-0 {
+						status = "okay";
+						nvidia,function = "xusb";
+					};
+
+					usb2-1 {
+						status = "okay";
+						nvidia,function = "xusb";
+					};
+
+					usb2-2 {
+						status = "okay";
+						nvidia,function = "xusb";
+					};
+				};
+			};
+
+		};
+
+		ports {
+			/* USBO1 */
+			usb2-0 {
+				status = "okay";
+				mode = "otg";
+				usb-role-switch;
+				vbus-supply = <&usb3_vbus_reg>;
+			};
+
+			/* USBH2 */
+			usb2-1 {
+				status = "okay";
+				mode = "host";
+			//	vbus-supply = <&reg_usbh_vbus>;
+			};
+
+			/* USBH4 */
+			usb2-2 {
+				status = "okay";
+				mode = "host";
+			//	vbus-supply = <&reg_usbh_vbus>;
+			};
+
+			usb3-0 {
+				status = "okay";
+				nvidia,usb2-companion = <2>;
+			//	vbus-supply = <&reg_usbh_vbus>;
+			};
+
+			usb3-1 {
+				status = "okay";
+				nvidia,usb2-companion = <0>;
+			//	vbus-supply = <&reg_usbo1_vbus>;
+			};
+		};
+	};
+
 };
 

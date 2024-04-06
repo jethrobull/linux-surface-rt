@@ -907,6 +907,99 @@
 				     <&{/cpus/cpu@3}>;
 	};
 
+	padctl: padctl@7009f000 {
+		compatible = "nvidia,tegra114-xusb-padctl";
+		reg = <0x7009f000 0x1000>;
+		resets = <&tegra_car 142>;
+		reset-names = "padctl";
+
+		pads {
+			usb2 {
+				status = "disabled";
+
+				lanes {
+					usb2-0 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+
+					usb2-1 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+
+					usb2-2 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+				};
+			};
+
+			ulpi {
+				status = "disabled";
+
+				lanes {
+					ulpi-0 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+				};
+			};
+
+			hsic {
+				status = "disabled";
+
+				lanes {
+					hsic-0 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+
+					hsic-1 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+				};
+			};
+
+		};
+
+		ports {
+			usb2-0 {
+				status = "disabled";
+			};
+
+			usb2-1 {
+				status = "disabled";
+			};
+
+			usb2-2 {
+				status = "disabled";
+			};
+
+			ulpi-0 {
+				status = "disabled";
+			};
+
+			hsic-0 {
+				status = "disabled";
+			};
+
+			hsic-1 {
+				status = "disabled";
+			};
+
+			usb3-0 {
+				status = "disabled";
+			};
+
+			usb3-1 {
+				status = "disabled";
+			};
+		};
+	};
+
+
 	thermal-zones {
 		cpu-thermal {
 			polling-delay-passive = <1000>;
