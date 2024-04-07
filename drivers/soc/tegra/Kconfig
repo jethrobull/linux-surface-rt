@@ -42,6 +42,7 @@ config ARCH_TEGRA_114_SOC
 	select PINCTRL_TEGRA114
 	select SOC_TEGRA_FLOWCTRL
 	select SOC_TEGRA_PMC
+        select SOC_TEGRA114_VOLTAGE_COUPLER if REGULATOR
 	select TEGRA_TIMER
 	help
 	  Support for NVIDIA Tegra T114 processor family, based on the
@@ -166,6 +167,11 @@ config SOC_TEGRA30_VOLTAGE_COUPLER
 	bool "Voltage scaling support for Tegra30 SoCs"
 	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
 	depends on REGULATOR
+
+config SOC_TEGRA114_VOLTAGE_COUPLER
+        bool "Voltage scaling support for Tegra114 SoCs"
+        depends on ARCH_TEGRA_114_SOC || COMPILE_TEST
+        depends on REGULATOR
 
 config SOC_TEGRA_CBB
 	tristate "Tegra driver to handle error from CBB"

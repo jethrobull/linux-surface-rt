@@ -28,7 +28,7 @@
 	clock@70110000 {
 		status = "okay";
 		nvidia,i2c-fs-rate = <400000>;
-		vdd-cpu-supply = <&reg_vdd_cpu>;
+		vdd-cpu-supply = <&vdd_cpu>;
 	};
 
 	clk32k_in: clock-32 {
@@ -157,7 +157,7 @@
 	pmc@7000e400 {
 		status = "okay";
 		nvidia,invert-interrupt;
-                nvidia,suspend-mode = <1>;
+                nvidia,suspend-mode = <2>;
 
 	};
 
@@ -171,7 +171,7 @@
 
 		state_default: pinmux {
 			/* UART A RX ??? */
-
+/*
 			sdmmc3_cmd_pa7 {
 				nvidia,pins = "sdmmc3_cmd_pa7";
 				nvidia,function = "uarta";
@@ -179,10 +179,10 @@
 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
 			};
-
+*/
 
 			/* UART A TX */
-
+/*
 			sdmmc3_dat1_pb6 {
 				nvidia,pins = "sdmmc3_dat1_pb6";
 				nvidia,function = "uarta";
@@ -190,7 +190,7 @@
 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
 			};
-
+*/
 
 			panel-backlight {
 				nvidia,pins = "gmi_ad8_ph0";
@@ -329,7 +329,7 @@
 			interrupt-parent = <&gpio>;
 			interrupts = <TEGRA_GPIO(S, 2) IRQ_TYPE_LEVEL_HIGH>;
 
-			infet6-supply = <&stub_sd_reg>;
+			infet6-supply = <&tps65090_dcdc2_reg>;
 
 			charger {
 				compatible = "ti,tps65090-charger";
@@ -425,14 +425,13 @@
 			pmic {
 				compatible = "ti,tps65913-pmic", "ti,palmas-pmic";
 
-				ldo9-in-supply = <&stub_sd_reg>;
-
-
-				ldousb-in-supply = <&stub_audio_reg>;
+				ldo9-in-supply = <&tps65913_smps9>;
+				ldoln-in-supply = <&tps65090_dcdc1_reg>;
+				ldousb-in-supply = <&tps65090_dcdc1_reg>;
 
 				regulators {
 
-					reg_vdd_cpu: smps123 {
+					vdd_cpu: smps123 {
 						regulator-name = "vdd-cpu";
 						regulator-min-microvolt = <800000>;
 						regulator-max-microvolt = <1400000>;
@@ -442,10 +441,14 @@
 						ti,mode-sleep = <0>;
 						regulator-ramp-delay = <2500>;
 						ti,warm-reset;
+						regulator-coupled-with = <&vdd_core>;
+						regulator-coupled-max-spread = <300000>;
+						regulator-max-step-microvolt = <100000>;
+						nvidia,tegra-cpu-regulator;
 					};
 
 					/*BDID 13*/
-					smps45 {
+					vdd_core: smps45 {
 						regulator-name = "vdd-core";
 						regulator-min-microvolt = <800000>;
 						regulator-max-microvolt = <1400000>;
@@ -455,10 +458,14 @@
 						ti,mode-sleep = <0>;
 						regulator-ramp-delay = <5000>;
 						ti,warm-reset;
+						regulator-coupled-with = <&vdd_cpu>;
+						regulator-coupled-max-spread = <300000>;
+						regulator-max-step-microvolt = <100000>;
+						nvidia,tegra-core-regulator;
 					};
 
 					/*BDID 0B*/
-					smps457 {
+/*					vdd_core: smps457 {
 						regulator-name = "vdd-core";
 						regulator-min-microvolt = <800000>;
 						regulator-max-microvolt = <1400000>;
@@ -468,8 +475,12 @@
 						ti,mode-sleep = <0>;
 						regulator-ramp-delay = <5000>;
 						ti,warm-reset;
+                                                regulator-coupled-with = <&vdd_cpu>;
+                                                regulator-coupled-max-spread = <300000>;
+                                                regulator-max-step-microvolt = <100000>;
+						nvidia,tegra-core-regulator;
 					};
-
+*/
 					// disabled in UEFI, could be used for something.
 					smps6 {
 						regulator-name = "tps65913_smps6";
@@ -481,8 +492,9 @@
 						ti,warm-reset;
 					};
 
-                                        tps65913_smps7: smps7 {
-                                                regulator-name = "tps65913_smps7";
+					//not present on BDID 0B
+                                        tps65913_smps7: smps7 { 
+                                                regulator-name = "tps65913_smps7"; //likely vd-ddr
                                                 regulator-min-microvolt = <1350000>;
                                                 regulator-max-microvolt = <1350000>;
                                                 regulator-always-on;
@@ -490,7 +502,7 @@
                                         };
 
 					tps65913_smps8: smps8 {
-						regulator-name = "vdd-1v8";
+						regulator-name = "vdd-1v8"; //likely vs-pmu-1v8
 						regulator-min-microvolt = <1800000>;
 						regulator-max-microvolt = <1800000>;
 						regulator-always-on;
@@ -502,7 +514,7 @@
 					};
 
 					tps65913_smps9: smps9 {
-						regulator-name = "vdd-1v05";
+						regulator-name = "vdd-1v05"; // likely va-pllx or avdd-pll
 						regulator-min-microvolt = <1050000>;
 						regulator-max-microvolt = <1050000>;
 						regulator-always-on;
@@ -543,7 +555,7 @@
 					};
 
                                         tps65913_ldo3: ldo3 {
-                                                regulator-name = "tps65913_ldo3";
+                                                regulator-name = "tps65913_ldo3"; // likely va-ap-1v2
                                                 regulator-min-microvolt = <1200000>;
                                                 regulator-max-microvolt = <1200000>;
                                                 regulator-always-on;
@@ -552,7 +564,7 @@
 
 
                                         ldo4 {
-                                                regulator-name = "tps65913_ldo4";
+                                                regulator-name = "tps65913_ldo4"; // likely vd-fuse
                                                 regulator-min-microvolt = <1800000>;
                                                 regulator-max-microvolt = <1800000>;
                                                 regulator-always-on;
@@ -569,7 +581,7 @@
 
 					ldo6 {
                                                 regulator-name = "tps65913_ldo6";
-                                                regulator-min-microvolt = <3300000>;
+                                                regulator-min-microvolt = <900000>;
                                                 regulator-max-microvolt = <3300000>;
                                                 regulator-always-on;
                                                 regulator-boot-on;
@@ -657,7 +669,6 @@
 //		cap-power-off-card;
 		keep-power-in-suspend;
 		max-frequency = <100000000>;
-//		max-frequency = <50000000>;
 
 		non-removable;
 
@@ -665,7 +676,7 @@
 		assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_C>;
 		assigned-clock-rates = <100000000>;
 		mmc-pwrseq = <&mrvl_wifi_pwrseq>;
-//		vqmmc-supply = <&xxxx>;
+//		vqmmc-supply = <&xxxx>; //todo
 
 		/* Marvell 88W8797 WiFi */
 		wifi@1 {
@@ -692,7 +703,7 @@
 
 	/* SD - SDMMC-3 */
 	mmc@78000400 {
-		status = "disabled"; // disable uart in UEFI stub
+		status = "okay"; // disable uart in UEFI stub
 		bus-width = <4>;
 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
 		vqmmc-supply = <&tps65913_ldo9>; // io voltage
@@ -745,7 +756,7 @@
 
 	cpus {
 		cpu@0 {
-			vdd-cpu-supply = <&reg_vdd_cpu>;
+			vdd-cpu-supply = <&vdd_cpu>;
 		};
 	};
 
@@ -781,13 +792,6 @@
 		};
 	};
 
-	stub_sd_reg: stub_sd {
-		compatible = "regulator-fixed";
-		regulator-name = "stub_sd";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-	};
-
 	stub_audio_reg: stub_audio {
 		compatible = "regulator-fixed";
 		regulator-name = "stub_audio";
@@ -802,10 +806,10 @@
 	};
 
 	padctl@7009f000 {
-		avdd-pll-utmip-supply = <&tps65913_smps8>;
-		avdd-pll-erefe-supply = <&tps65913_smps9>;
-		avdd-pex-pll-supply = <&tps65913_smps9>;
-		hvdd-pex-pll-e-supply = <&ldousb>;
+//		avdd-pll-utmip-supply = <&tps65913_smps8>;
+//		avdd-pll-erefe-supply = <&tps65913_smps9>;
+//		avdd-pex-pll-supply = <&tps65913_smps9>;
+//		hvdd-pex-pll-e-supply = <&ldousb>;
 
 		pads {
 			usb2 {
