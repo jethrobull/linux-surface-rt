@@ -19,7 +19,7 @@
 
 /*
  * tegra114_CAR_BANK_COUNT: the number of peripheral clock register
- * banks present in the tegra114/132 CAR IP block.  The banks are
+ * banks present in the tegra114 CAR IP block.  The banks are
  * identified by single letters, e.g.: L, H, U, V, W, X.  See
  * periph_regs[] in drivers/clk/tegra/clk.c
  */
@@ -1377,13 +1377,6 @@ static struct tegra_clk_init_table tegra114_init_table[] __initdata = {
 	{ TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_CLK_MAX, 0, 0 },
 };
 
-/* Tegra132 requires the SOC_THERM clock to remain active */
-static struct tegra_clk_init_table tegra132_init_table[] __initdata = {
-	{ TEGRA114_CLK_SOC_THERM, TEGRA114_CLK_PLL_P, 51000000, 1 },
-	/* must be the last entry */
-	{ TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_CLK_MAX, 0, 0 },
-};
-
 static struct tegra_audio_clk_info tegra114_audio_plls[] = {
 	{ "pll_a", &pll_a_params, tegra_clk_pll_a, "pll_p_out1" },
 };
@@ -1465,35 +1458,20 @@ static int tegra114_reset_deassert(unsigned long id)
 }
 
 /**
- * tegra132_clock_apply_init_table - initialize clocks on Tegra132 SoCs
- *
- * Program an initial clock rate and enable or disable clocks needed
- * by the rest of the kernel, for Tegra132 SoCs.  It is intended to be
- * called by assigning a pointer to it to tegra_clk_apply_init_table -
- * this will be called as an arch_initcall.  No return value.
- */
-static void __init tegra132_clock_apply_init_table(void)
-{
-	tegra_init_from_table(common_init_table, clks, TEGRA114_CLK_CLK_MAX);
-	tegra_init_from_table(tegra132_init_table, clks, TEGRA114_CLK_CLK_MAX);
-}
-
-/**
- * tegra114_132_clock_init_pre - clock initialization preamble for T124/T132
+ * tegra114_clock_init_pre - clock initialization preamble for T114
  * @np: struct device_node * of the DT node for the SoC CAR IP block
  *
  * Register most of the clocks controlled by the CAR IP block.
- * Everything in this function should be common to tegra114 and Tegra132.
  * No return value.
  */
-static void __init tegra114_132_clock_init_pre(struct device_node *np)
+static void __init tegra114_clock_init_pre(struct device_node *np)
 {
 	struct device_node *node;
 	u32 plld_base;
 
 	clk_base = of_iomap(np, 0);
 	if (!clk_base) {
-		pr_err("ioremap tegra114/tegra132 CAR failed\n");
+		pr_err("ioremap tegra114 CAR failed\n");
 		return;
 	}
 
@@ -1529,7 +1507,7 @@ static void __init tegra114_132_clock_init_pre(struct device_node *np)
 			     tegra114_audio_plls,
 			     ARRAY_SIZE(tegra114_audio_plls), 24576000);
 
-	/* For tegra114 & Tegra132, PLLD is the only source for DSIA & DSIB */
+	/* For tegra114, PLLD is the only source for DSIA & DSIB */
 	plld_base = readl(clk_base + PLLD_BASE);
 	plld_base &= ~BIT(25);
 	writel(plld_base, clk_base + PLLD_BASE);
@@ -1556,16 +1534,15 @@ static struct clk *tegra114_CLK_src_onecell_get(struct of_phandle_args *clkspec,
 }
 
 /**
- * tegra114_132_clock_init_post - clock initialization postamble for T124/T132
+ * tegra114_clock_init_post - clock initialization postamble for T124
  * @np: struct device_node * of the DT node for the SoC CAR IP block
  *
  * Register most of the clocks controlled by the CAR IP block.
- * Everything in this function should be common to tegra114
- * and Tegra132.  This function must be called after
- * tegra114_132_clock_init_pre(), otherwise clk_base will not be set.
+ * This function must be called after
+ * tegra114_clock_init_pre(), otherwise clk_base will not be set.
  * No return value.
  */
-static void __init tegra114_132_clock_init_post(struct device_node *np)
+static void __init tegra114_clock_init_post(struct device_node *np)
 {
 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
 				  &pll_x_params);
@@ -1585,48 +1562,18 @@ static void __init tegra114_132_clock_init_post(struct device_node *np)
  * tegra114_clock_init - tegra114-specific clock initialization
  * @np: struct device_node * of the DT node for the SoC CAR IP block
  *
- * Register most SoC clocks for the tegra114 system-on-chip.  Most of
- * this code is shared between the tegra114 and Tegra132 SoCs,
- * although some of the initial clock settings and CPU clocks differ.
+ * Register most SoC clocks for the tegra114 system-on-chip.
  * Intended to be called by the OF init code when a DT node with the
  * "nvidia,tegra114-car" string is encountered, and declared with
  * CLK_OF_DECLARE.  No return value.
  */
 static void __init tegra114_clock_init(struct device_node *np)
 {
-	tegra114_132_clock_init_pre(np);
+	tegra114_clock_init_pre(np);
 	tegra_clk_apply_init_table = tegra114_clock_apply_init_table;
-	tegra114_132_clock_init_post(np);
+	tegra114_clock_init_post(np);
 }
 
-/**
- * tegra132_clock_init - Tegra132-specific clock initialization
- * @np: struct device_node * of the DT node for the SoC CAR IP block
- *
- * Register most SoC clocks for the Tegra132 system-on-chip.  Most of
- * this code is shared between the tegra114 and Tegra132 SoCs,
- * although some of the initial clock settings and CPU clocks differ.
- * Intended to be called by the OF init code when a DT node with the
- * "nvidia,tegra132-car" string is encountered, and declared with
- * CLK_OF_DECLARE.  No return value.
- */
-static void __init tegra132_clock_init(struct device_node *np)
-{
-	tegra114_132_clock_init_pre(np);
-
-	/*
-	 * On Tegra132, these clocks are controlled by the
-	 * CLUSTER_clocks IP block, located in the CPU complex
-	 */
-	tegra114_clks[tegra_clk_cclk_g].present = false;
-	tegra114_clks[tegra_clk_cclk_lp].present = false;
-	tegra114_clks[tegra_clk_pll_x].present = false;
-	tegra114_clks[tegra_clk_pll_x_out0].present = false;
-
-	tegra_clk_apply_init_table = tegra132_clock_apply_init_table;
-	tegra114_132_clock_init_post(np);
-}
 CLK_OF_DECLARE(tegra114, "nvidia,tegra114-car", tegra114_clock_init);
-CLK_OF_DECLARE(tegra132, "nvidia,tegra132-car", tegra132_clock_init);
 
 

@@ -494,6 +494,11 @@ struct clk *tegra114_clk_register_emc(void __iomem *base, struct device_node *np
 	struct clk *clk;
 	int err;
 
+
+u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
+
+        pr_warn("%s : hw version %d\n",__func__, hw_version);
+
 	tegra = kcalloc(1, sizeof(*tegra), GFP_KERNEL);
 	if (!tegra)
 		return ERR_PTR(-ENOMEM);

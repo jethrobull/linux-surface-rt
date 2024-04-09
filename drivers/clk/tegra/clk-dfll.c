@@ -1703,6 +1703,10 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td, unsigned long v_max)
 	int ret = -EINVAL;
 	int j, selector, lut;
 
+
+                dev_info(td->dev,
+                        "DEBUG: dfll_build_i2c_lut\n");
+
 	v = td->soc->cvb->min_millivolts * 1000;
 	lut = find_vdd_map_entry_exact(td, v);
 	if (lut < 0)
@@ -1820,6 +1824,9 @@ static int dfll_fetch_i2c_params(struct tegra_dfll *td)
 	struct i2c_client *i2c_client;
 	int vsel_reg, vsel_mask;
 	int ret;
+
+                dev_info(td->dev,
+                        "DEBUG: dfll_fetch_i2c_params\n");
 
 	if (!read_dt_param(td, "nvidia,i2c-fs-rate", &td->i2c_fs_rate))
 		return -EINVAL;

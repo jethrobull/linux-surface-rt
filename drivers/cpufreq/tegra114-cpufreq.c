@@ -15,6 +15,7 @@
 #include <linux/platform_device.h>
 #include <linux/pm_opp.h>
 #include <linux/types.h>
+#include <soc/tegra/fuse.h>
 
 struct tegra114_cpufreq_priv {
 	struct clk *cpu_clk;
