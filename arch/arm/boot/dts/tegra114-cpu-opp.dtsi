@@ -1,0 +1,105 @@
+// SPDX-License-Identifier: GPL-2.0
+
+/ {
+	cpu0_opp_table: opp-table-cpu0 {
+		compatible = "operating-points-v2";
+		opp-shared;
+
+		opp-306000000-900 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x1F 0x0C00>;
+			opp-hz = /bits/ 64 <312000000>;
+		};
+
+		opp-408000000-950 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x1F 0x0192>;
+			opp-hz = /bits/ 64 <408000000>;
+		};
+
+		opp-510000000-970 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x1E 0x306C>;
+			opp-hz = /bits/ 64 <510000000>;
+		};
+
+		opp-612000000-1000 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x1F 0x0C00>;
+			opp-hz = /bits/ 64 <612000000>;
+		};
+
+		opp-714000000-1020 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x1E 0x31FE>;
+			opp-hz = /bits/ 64 <714000000>;
+		};
+
+		opp-816000000-1020 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x1F 0x0400>;
+			opp-hz = /bits/ 64 <816000000>;
+		};
+
+		opp-918000000-1020 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x1E 0x306C>;
+			opp-hz = /bits/ 64 <918000000>;
+		};
+
+		opp-102000000-1030 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x01 0x0192>;
+			opp-hz = /bits/ 64 <102000000>;
+		};
+
+		opp-112200000-1090 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x01 0x0192>;
+			opp-hz = /bits/ 64 <102200000>;
+		};
+
+		opp-122400000-1090 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x1F 0x0400>;
+			opp-hz = /bits/ 64 <122400000>;
+		};
+
+		opp-132600000-1120 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x0C 0x0001>;
+			opp-hz = /bits/ 64 <132600000>;
+		};
+
+		opp-142800000-1400 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x01 0x0192>;
+			opp-hz = /bits/ 64 <142800000>;
+		};
+
+                opp-1530000000-1400 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x01 0x0192>;
+			opp-hz = /bits/ 64 <1530000000>;
+		};
+
+		opp-1606500000-1400 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x01 0x0192>;
+			opp-hz = /bits/ 64 <1606500000>;
+		};
+
+		opp-1708500000-1400 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x18 0x3060>;
+			opp-hz = /bits/ 64 <1708500000>;
+		};
+
+		opp-1810500000-1400 {
+			clock-latency-ns = <100000>;
+			opp-supported-hw = <0x01 0x0192>;
+			opp-hz = /bits/ 64 <1810500000>;
+		};
+
+	};
+};

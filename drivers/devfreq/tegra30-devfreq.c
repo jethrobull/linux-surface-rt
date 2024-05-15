@@ -107,6 +107,28 @@ enum tegra_actmon_device {
 	MCCPU,
 };
 
+static const struct tegra_devfreq_device_config tegra114_device_configs[] = {
+        {
+                /* MCALL: All memory accesses (including from the CPUs) */
+                .offset = 0x1c0,
+                .irq_mask = 1 << 26,
+                .boost_up_coeff = 200,
+                .boost_down_coeff = 50,
+                .boost_up_threshold = 45,
+                .boost_down_threshold = 30,
+        },
+        {
+                /* MCCPU: memory accesses from the CPUs */
+                .offset = 0x200,
+                .irq_mask = 1 << 25,
+                .boost_up_coeff = 800,
+                .boost_down_coeff = 40,
+                .boost_up_threshold = 27,
+                .boost_down_threshold = 10,
+                .avg_dependency_threshold = 16000, /* 16MHz in kHz units */
+        },
+};
+
 static const struct tegra_devfreq_device_config tegra124_device_configs[] = {
 	{
 		/* MCALL: All memory accesses (including from the CPUs) */
@@ -864,6 +886,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
 		.config_clks = tegra_devfreq_config_clks_nop,
 	};
 
+                dev_err(&pdev->dev, "Probe start\n");
+
 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
 	if (!tegra)
 		return -ENOMEM;
@@ -959,9 +983,19 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "Failed to add device: %pe\n", devfreq);
 		return PTR_ERR(devfreq);
 	}
-
+                dev_err(&pdev->dev, "Probe done\n");
 	return 0;
 }
+
+static const struct tegra_devfreq_soc_data tegra114_soc = {
+        .configs = tegra114_device_configs,
+
+        /*
+         * Activity counter is incremented every 256 memory transactions,
+         * and each transaction takes 4 EMC clocks.
+         */
+        .count_weight = 4 * 256,
+};
 
 static const struct tegra_devfreq_soc_data tegra124_soc = {
 	.configs = tegra124_device_configs,
@@ -980,6 +1014,7 @@ static const struct tegra_devfreq_soc_data tegra30_soc = {
 
 static const struct of_device_id tegra_devfreq_of_match[] = {
 	{ .compatible = "nvidia,tegra30-actmon",  .data = &tegra30_soc, },
+        { .compatible = "nvidia,tegra114-actmon",  .data = &tegra114_soc, },
 	{ .compatible = "nvidia,tegra124-actmon", .data = &tegra124_soc, },
 	{ },
 };

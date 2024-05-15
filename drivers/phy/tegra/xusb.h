@@ -498,6 +498,10 @@ struct tegra_xusb_lane *tegra_xusb_find_lane(struct tegra_xusb_padctl *padctl,
 					     const char *name,
 					     unsigned int index);
 
+
+#if defined(CONFIG_ARCH_TEGRA_114_SOC)
+extern const struct tegra_xusb_padctl_soc tegra114_xusb_padctl_soc;
+#endif
 #if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
 extern const struct tegra_xusb_padctl_soc tegra124_xusb_padctl_soc;
 #endif

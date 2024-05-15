@@ -48,6 +48,12 @@ static struct phy *tegra_xusb_pad_of_xlate(struct device *dev,
 }
 
 static const struct of_device_id tegra_xusb_padctl_of_match[] = {
+#if defined(CONFIG_ARCH_TEGRA_114_SOC)
+        {
+                .compatible = "nvidia,tegra114-xusb-padctl",
+                .data = &tegra114_xusb_padctl_soc,
+        },
+#endif
 #if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_SOC)
 	{
 		.compatible = "nvidia,tegra124-xusb-padctl",

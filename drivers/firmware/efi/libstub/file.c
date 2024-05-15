@@ -9,7 +9,6 @@
 
 #include <linux/efi.h>
 #include <asm/efi.h>
-
 #include "efistub.h"
 
 #define MAX_FILENAME_SIZE	256
@@ -99,6 +98,7 @@ efi_status_t efi_open_read_cmdline_from_file(efi_loaded_image_t *image)
 	efi_file_protocol_t *file = NULL;
 	int i;
 	unsigned long size = 0;
+	static char *dtb_name = NULL;
 	static char *file_data = NULL;
 	struct finfo fi = {.filename = L"cmdline.txt"};
 
@@ -124,6 +124,12 @@ efi_status_t efi_open_read_cmdline_from_file(efi_loaded_image_t *image)
 		goto err_on_read_file;
 	}
 	file->close(file);
+
+	dtb_name = "dtb=/tegra20.dtb";
+
+	for (i = size-1; i >= ((size-1)+39); i++) {
+		file_data[i] = dtb_name[i];
+	}
 
 	// convert ascii to Unicode
 	for (i = size-1; i >= 0; i--) {

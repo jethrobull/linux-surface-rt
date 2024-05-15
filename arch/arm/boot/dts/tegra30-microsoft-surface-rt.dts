@@ -87,6 +87,9 @@
 
 		post-power-on-delay-ms = <300>;
 		power-off-delay-us = <300>;
+
+                shutdown-gpios = <&gpio TEGRA_GPIO(D, 4) GPIO_ACTIVE_HIGH>;
+                reset-gpios = <&gpio TEGRA_GPIO(D, 3) GPIO_ACTIVE_LOW>;
 	};
 
 	lvds-encoder {
@@ -641,7 +644,11 @@
 &uartc {
 	status = "okay";
 	compatible = "nvidia,tegra30-hsuart";
-
+		bluetooth {
+			status = "okay";	
+			compatible = "mrvl,88w8897";
+                shutdown-gpios = <&gpio TEGRA_GPIO(D, 1) GPIO_ACTIVE_HIGH>;
+		};
 	/* Bluetooth - Marvell 88W8797*/
 };
 

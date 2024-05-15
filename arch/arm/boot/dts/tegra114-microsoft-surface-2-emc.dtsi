@@ -66,23 +66,23 @@
 			timing-600000000 {
 				clock-frequency = <600000000>;
 				nvidia,parent-clock-frequency = <600000000>;
-				clocks = <&tegra_car TEGRA114_CLK_PLL_C_UD>;
+				clocks = <&tegra_car TEGRA114_CLK_PLL_C>;
 				clock-names = "emc-parent";
 			};
 
 			timing-792000000 {
 				clock-frequency = <792000000>;
 				nvidia,parent-clock-frequency = <792000000>;
-				clocks = <&tegra_car TEGRA114_CLK_PLL_M_UD>;
+				clocks = <&tegra_car TEGRA114_CLK_PLL_M>;
 				clock-names = "emc-parent";
 			};
 		};
 
 	};
 
-	apbmisc@70000800 {
-		nvidia,long-ram-code;
-	};
+//	apbmisc@70000800 {
+//		nvidia,long-ram-code;
+//	};
 
 	memory-controller@70019000 {
 		emc-timings-1 {

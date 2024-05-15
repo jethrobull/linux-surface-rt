@@ -40,4 +40,6 @@
 #define TEGRA114_MC_RESET_VDE		14
 #define TEGRA114_MC_RESET_VI		15
 
+#define TEGRA114_MC_MPCORER          39
+
 #endif

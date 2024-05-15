@@ -4,7 +4,7 @@
 
 #include <dt-bindings/input/input.h>
 #include "tegra114.dtsi"
-//#include "tegra114-microsoft-surface-2-emc.dtsi"
+#include "tegra114-microsoft-surface-2-emc.dtsi"
 
 / {
 	model = "Microsoft Surface 2";
@@ -19,6 +19,7 @@
 		rtc1 = "/rtc@7000e000";
 
 		serial0 = &uarta; /* console */
+		serial1 = &uartc; /* BT */
 	};
 
 	chosen {
@@ -565,7 +566,7 @@
                                         };
 
 
-                                        ldo4 {
+                                        tps65913_ldo4: ldo4 {
                                                 regulator-name = "tps65913_ldo4"; // likely vd-fuse
                                                 regulator-min-microvolt = <1800000>;
                                                 regulator-max-microvolt = <1800000>;
@@ -573,7 +574,7 @@
                                                 regulator-boot-on;
                                         };
 
-					ldo5 {
+					tps65913_ldo5: ldo5 {
 					        regulator-name = "tps65913_ldo5";
                                                 regulator-min-microvolt = <1800000>;
                                                 regulator-max-microvolt = <1800000>;
@@ -609,6 +610,7 @@
 						regulator-name = "vddio-sdmmc-2";
 						regulator-min-microvolt = <1800000>;
 						regulator-max-microvolt = <3300000>;
+						regulator-always-on;
 					};
 
 					ldousb: ldousb {
@@ -685,7 +687,7 @@
 			compatible = "marvell,sd8897";
 			reg = <1>;
 			interrupt-parent = <&gpio>;
-			interrupts = <TEGRA_GPIO(U, 5) IRQ_TYPE_LEVEL_LOW>; // change back to LOW to comply ACPI
+			interrupts = <TEGRA_GPIO(U, 5) IRQ_TYPE_LEVEL_HIGH>; // change back to LOW to comply ACPI
 		};
 	};
 
@@ -695,11 +697,11 @@
 		clocks = <&tegra_pmc TEGRA_PMC_CLK_BLINK>;
 		clock-names = "ext_clock";
 
-		post-power-on-delay-ms = <300>;
-		power-off-delay-us = <300>;
+		post-power-on-delay-ms = <1500>;
+		power-off-delay-us = <1500>;
 
 		shutdown-gpios = <&gpio TEGRA_GPIO(K, 0) GPIO_ACTIVE_HIGH>;
-		reset-gpios = <&gpio TEGRA_GPIO(K, 4) GPIO_ACTIVE_LOW>;
+		reset-gpios = <&gpio TEGRA_GPIO(K, 2) GPIO_ACTIVE_HIGH>;
 
 	};
 
@@ -721,7 +723,7 @@
 
 	usb@7d000000 {
 		status = "okay";
-		dr_mode = "otg";
+		dr_mode = "host";
 	};
 
 	usb-phy@7d000000 {
@@ -807,8 +809,31 @@
 		gpio = <&gpio TEGRA_GPIO(K, 6) GPIO_ACTIVE_HIGH>;
 	};
 
-	padctl@7009f000 {
+	
+	usb@70090000 {
+		phys = <&{/padctl@7009f000/pads/usb2/lanes/usb2-0}>, /* 1st USB A */
+		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-1}>, /* Internal USB */
+		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-2}>, /* 2nd USB A */
+		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>, /* 1st USB A */
+		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-1}>; /* 2nd USB A */
+		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb3-0", "usb3-1";
+
+//		avddio-pex-supply = <&tps65913_smps9>;
+//		dvddio-pex-supply = <&tps65913_smps9>;
+//		avdd-usb-supply = <&ldousb>;
 //		avdd-pll-utmip-supply = <&tps65913_smps8>;
+//		avdd-pll-erefe-supply = <&tps65913_smps9>;
+//		avdd-usb-ss-pll-supply = <&tps65913_smps9>;
+//		hvdd-usb-ss-supply = <&ldousb>;
+//		hvdd-usb-ss-pll-e-supply = <&ldousb>;
+
+		status = "okay";
+	};
+
+	padctl@7009f000 {
+		status = "okay";
+
+//		avdd-pll-utmip-supply = <&tps65913_ldo4>;
 //		avdd-pll-erefe-supply = <&tps65913_smps9>;
 //		avdd-pex-pll-supply = <&tps65913_smps9>;
 //		hvdd-pex-pll-e-supply = <&ldousb>;
@@ -841,7 +866,7 @@
 			/* USBO1 */
 			usb2-0 {
 				status = "okay";
-				mode = "otg";
+				mode = "host";
 				usb-role-switch;
 				vbus-supply = <&usb3_vbus_reg>;
 			};

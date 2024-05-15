@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 #include <dt-bindings/clock/tegra114-car.h>
+#include <dt-bindings/clock/tegra114-car-common.h>
 #include <dt-bindings/gpio/tegra-gpio.h>
 #include <dt-bindings/memory/tegra114-mc.h>
 #include <dt-bindings/reset/tegra114-car.h>
@@ -7,6 +8,8 @@
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 #include <dt-bindings/soc/tegra-pmc.h>
 #include <dt-bindings/thermal/tegra114-soctherm.h>
+
+#include "tegra114-peripherals-opp.dtsi"
 
 / {
 	compatible = "nvidia,tegra114";
@@ -190,16 +193,33 @@
 		clocks = <&tegra_car TEGRA114_CLK_TIMER>;
 	};
 
+
 	tegra_car: clock@60006000 {
 		compatible = "nvidia,tegra114-car";
 		reg = <0x60006000 0x1000>;
 		#clock-cells = <1>;
 		#reset-cells = <1>;
+		nvidia,external-memory-controller = <&emc>;
 	};
 
 	flow-controller@60007000 {
 		compatible = "nvidia,tegra114-flowctrl";
 		reg = <0x60007000 0x1000>;
+	};
+
+	actmon: actmon@6000c800 {
+		compatible = "nvidia,tegra114-actmon";
+		reg = <0x6000c800 0x400>;
+		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&tegra_car TEGRA114_CLK_ACTMON>,
+			 <&tegra_car TEGRA114_CLK_EMC>;
+		clock-names = "actmon", "emc";
+		resets = <&tegra_car 119>;
+		reset-names = "actmon";
+		operating-points-v2 = <&emc_bw_dfs_opp_table>;
+		interconnects = <&mc TEGRA114_MC_MPCORER &emc>;
+		interconnect-names = "cpu-read";
+		#cooling-cells = <2>;
 	};
 
 	apbdma: dma@6000a000 {
@@ -583,6 +603,55 @@
 		#iommu-cells = <1>;
 	};
 
+        emc: external-memory-controller@7001b000 {
+                compatible = "nvidia,tegra114-emc";
+                reg = <0x7001b000 0x1000>;
+                clocks = <&tegra_car TEGRA114_CLK_EMC>;
+                clock-names = "emc";
+		status = "okay";
+                nvidia,memory-controller = <&mc>;
+                operating-points-v2 = <&emc_icc_dvfs_opp_table>;
+
+                #interconnect-cells = <0>;
+        };
+
+
+	usb@70090000 {
+		compatible = "nvidia,tegra114-xusb";
+		reg = <0x70090000 0x8000>,
+		      <0x70098000 0x1000>,
+		      <0x70099000 0x1000>;
+		reg-names = "hcd", "fpci", "ipfs";
+
+		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+
+		clocks = <&tegra_car TEGRA114_CLK_XUSB_HOST>,
+			 <&tegra_car TEGRA114_CLK_XUSB_HOST_SRC>,
+			 <&tegra_car TEGRA114_CLK_XUSB_FALCON_SRC>,
+			 <&tegra_car TEGRA114_CLK_XUSB_SS>,
+			 <&tegra_car TEGRA114_CLK_XUSB_SS_DIV2>,
+			 <&tegra_car TEGRA114_CLK_XUSB_SS_SRC>,
+			 <&tegra_car TEGRA114_CLK_XUSB_HS_SRC>,
+			 <&tegra_car TEGRA114_CLK_XUSB_FS_SRC>,
+			 <&tegra_car TEGRA114_CLK_PLL_U_480M>,
+			 <&tegra_car TEGRA114_CLK_CLK_M>,
+			 <&tegra_car TEGRA114_CLK_PLL_E>;
+		clock-names = "xusb_host", "xusb_host_src",
+			      "xusb_falcon_src", "xusb_ss",
+			      "xusb_ss_div2", "xusb_ss_src",
+			      "xusb_hs_src", "xusb_fs_src",
+			      "pll_u_480m", "clk_m", "pll_e";
+		resets = <&tegra_car 89>, <&tegra_car 156>,
+			 <&tegra_car 143>;
+		reset-names = "xusb_host", "xusb_ss", "xusb_src";
+
+		nvidia,xusb-padctl = <&padctl>;
+
+		status = "disabled";
+	};
+
+
 	soctherm: thermal-sensor@700e2000 {
 		compatible = "nvidia,tegra114-soctherm";
 		reg = <0x0 0x700e2000 0x0 0x600>, /* SOC_THERM reg_base */
@@ -961,6 +1030,49 @@
 					};
 				};
 			};
+
+			pcie {
+				status = "disabled";
+
+				lanes {
+					pcie-0 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+
+					pcie-1 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+
+					pcie-2 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+
+					pcie-3 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+
+					pcie-4 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+				};
+			};
+
+			sata {
+				status = "disabled";
+
+				lanes {
+					sata-0 {
+						status = "disabled";
+						#phy-cells = <0>;
+					};
+				};
+			};
+
 
 		};
 

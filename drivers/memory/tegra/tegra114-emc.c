@@ -995,7 +995,6 @@ static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
 
 static const struct of_device_id tegra_emc_of_match[] = {
 	{ .compatible = "nvidia,tegra114-emc" },
-	{ .compatible = "nvidia,tegra132-emc" },
 	{}
 };
 MODULE_DEVICE_TABLE(of, tegra_emc_of_match);
@@ -1012,7 +1011,6 @@ tegra_emc_find_node_by_ram_code(struct device_node *node, u32 ram_code)
 		err = of_property_read_u32(np, "nvidia,ram-code", &value);
 		if (err || (value != ram_code))
 			continue;
-
 		return np;
 	}
 
@@ -1263,23 +1261,20 @@ emc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
 	struct icc_provider *provider = data;
 	struct icc_node_data *ndata;
 	struct icc_node *node;
-
 	/* External Memory is the only possible ICC route */
 	list_for_each_entry(node, &provider->nodes, node_list) {
 		if (node->id != TEGRA_ICC_EMEM)
 			continue;
-
 		ndata = kzalloc(sizeof(*ndata), GFP_KERNEL);
 		if (!ndata)
 			return ERR_PTR(-ENOMEM);
-
 		/*
 		 * SRC and DST nodes should have matching TAG in order to have
 		 * it set by default for a requested path.
 		 */
+
 		ndata->tag = TEGRA_MC_ICC_TAG_ISO;
 		ndata->node = node;
-
 		return ndata;
 	}
 
@@ -1317,44 +1312,35 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
 	const struct tegra_mc_soc *soc = emc->mc->soc;
 	struct icc_node *node;
 	int err;
-
 	emc->provider.dev = emc->dev;
 	emc->provider.set = emc_icc_set;
 	emc->provider.data = &emc->provider;
-	emc->provider.aggregate = soc->icc_ops->aggregate;
+//	emc->provider.aggregate = soc->icc_ops->aggregate; // TODO investigate if needed and why this causes null pointer dereference
 	emc->provider.xlate_extended = emc_of_icc_xlate_extended;
-
 	icc_provider_init(&emc->provider);
-
 	/* create External Memory Controller node */
 	node = icc_node_create(TEGRA_ICC_EMC);
 	if (IS_ERR(node)) {
 		err = PTR_ERR(node);
 		goto err_msg;
 	}
-
 	node->name = "External Memory Controller";
 	icc_node_add(node, &emc->provider);
-
 	/* link External Memory Controller to External Memory (DRAM) */
 	err = icc_link_create(node, TEGRA_ICC_EMEM);
 	if (err)
 		goto remove_nodes;
-
 	/* create External Memory node */
 	node = icc_node_create(TEGRA_ICC_EMEM);
 	if (IS_ERR(node)) {
 		err = PTR_ERR(node);
 		goto remove_nodes;
 	}
-
 	node->name = "External Memory (DRAM)";
 	icc_node_add(node, &emc->provider);
-
 	err = icc_provider_register(&emc->provider);
 	if (err)
 		goto remove_nodes;
-
 	return 0;
 
 remove_nodes:
@@ -1369,7 +1355,7 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
 {
 	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
 	int opp_token, err;
-	dev_info(emc->dev,"hw version %d\n", hw_version);
+//	dev_info(emc->dev,"hw version %d\n", hw_version);
 	err = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
 	if (err < 0) {
 		dev_err(emc->dev, "failed to set OPP supported HW: %d\n", err);
@@ -1396,7 +1382,7 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
 		dev_err(emc->dev, "failed to initialize OPP clock: %d\n", err);
 		goto remove_table;
 	}
-
+	dev_info_once(emc->dev, "OPP emc rate set %lu MHZ\n",clk_get_rate(emc->clk) / 1000000);
 	return 0;
 
 remove_table:
@@ -1436,6 +1422,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
 
 	ram_code = tegra_read_ram_code();
 
+        dev_info_once(emc->dev, "ram code %d \n",ram_code);
+
 	np = tegra_emc_find_node_by_ram_code(pdev->dev.of_node, ram_code);
 	if (np) {
 		err = tegra_emc_load_timings_from_dt(emc, np);
@@ -1474,12 +1462,10 @@ static int tegra_emc_probe(struct platform_device *pdev)
 	err = tegra_emc_opp_table_init(emc);
 	if (err)
 		return err;
-
 	tegra_emc_rate_requests_init(emc);
 
 	if (IS_ENABLED(CONFIG_DEBUG_FS))
 		emc_debugfs_init(&pdev->dev, emc);
-
 	tegra_emc_interconnect_init(emc);
 
 	/*
@@ -1487,7 +1473,11 @@ static int tegra_emc_probe(struct platform_device *pdev)
 	 * extra complexity which doesn't really worth the effort in a case of
 	 * this driver.
 	 */
+
+
 	try_module_get(THIS_MODULE);
+
+	dev_info(&pdev->dev, "probed\n");
 
 	return 0;
 };
