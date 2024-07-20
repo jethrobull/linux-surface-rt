@@ -419,12 +419,16 @@ static struct platform_driver tegra_host1x_driver = {
 static const struct of_device_id host1x_stub_of_matches[] = {
 	{ .compatible = "nvidia,tegra20-mpe", },
 	{ .compatible = "nvidia,tegra30-mpe", },
+	{ .compatible = "nvidia,tegra114-mpe", },
 	{ .compatible = "nvidia,tegra20-epp", },
 	{ .compatible = "nvidia,tegra30-epp", },
+	{ .compatible = "nvidia,tegra114-epp", },
 	{ .compatible = "nvidia,tegra20-vi", },
 	{ .compatible = "nvidia,tegra30-vi", },
+	{ .compatible = "nvidia,tegra114-vi", },
 	{ .compatible = "nvidia,tegra20-isp", },
 	{ .compatible = "nvidia,tegra30-isp", },
+	{ .compatible = "nvidia,tegra114-isp", },
 	{ /* sentinel */ }
 };
 
