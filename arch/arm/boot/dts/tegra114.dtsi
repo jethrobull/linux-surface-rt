@@ -580,6 +580,110 @@
 		clocks = <&tegra_car TEGRA114_CLK_PCLK>, <&clk32k_in>;
 		clock-names = "pclk", "clk32k_in";
 		#clock-cells = <1>;
+		pd_core: core-domain {
+			#power-domain-cells = <0>;
+		};
+
+		powergates {
+			pd_dis: dis {
+				clocks = <&tegra_car TEGRA114_CLK_DISP1>,
+					 <&tegra_car TEGRA114_CLK_DSIA>,
+					 <&tegra_car TEGRA114_CLK_DSIB>,
+					 <&tegra_car TEGRA114_CLK_MIPI_CAL>;
+				resets = <&mc TEGRA114_MC_RESET_DC>,
+					 <&tegra_car TEGRA114_CLK_DISP1>,
+					 <&tegra_car TEGRA114_CLK_DSIA>,
+					 <&tegra_car TEGRA114_CLK_DSIB>,
+					 <&tegra_car TEGRA114_CLK_MIPI_CAL>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_disb: disb {
+				clocks = <&tegra_car TEGRA114_CLK_DISP2>,
+					 <&tegra_car TEGRA114_CLK_HDMI>;
+				resets = <&mc TEGRA114_MC_RESET_DCB>,
+					 <&tegra_car TEGRA114_CLK_DISP2>,
+					 <&tegra_car TEGRA114_CLK_HDMI>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_heg: heg {
+				clocks = <&tegra_car TEGRA114_CLK_GR2D>,
+					 <&tegra_car TEGRA114_CLK_EPP>,
+					 <&tegra_car TEGRA114_CLK_HOST1X>;
+				resets = <&mc TEGRA114_MC_RESET_2D>,
+					 <&mc TEGRA114_MC_RESET_EPP>,
+					 <&mc TEGRA114_MC_RESET_HC>,
+					 <&tegra_car TEGRA114_CLK_GR2D>,
+					 <&tegra_car TEGRA114_CLK_EPP>,
+					 <&tegra_car TEGRA114_CLK_HOST1X>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_mpe: mpe {
+				clocks = <&tegra_car TEGRA114_CLK_MSENC>;
+				resets = <&mc TEGRA114_MC_RESET_MPE>,
+					 <&tegra_car TEGRA114_CLK_MSENC>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_3d: td {
+				clocks = <&tegra_car TEGRA114_CLK_GR3D>;
+				resets = <&mc TEGRA114_MC_RESET_3D>,
+					 <&tegra_car TEGRA114_CLK_GR3D>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_vde: vdec {
+				clocks = <&tegra_car TEGRA114_CLK_VDE>;
+				resets = <&mc TEGRA114_MC_RESET_VDE>,
+					 <&tegra_car TEGRA114_CLK_VDE>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_venc: venc {
+				clocks = <&tegra_car TEGRA114_CLK_ISP>,
+					 <&tegra_car TEGRA114_CLK_VI>,
+					 <&tegra_car TEGRA114_CLK_CSI>;
+				resets = <&mc TEGRA114_MC_RESET_ISP>,
+					 <&mc TEGRA114_MC_RESET_VI>,
+					 <&tegra_car TEGRA114_CLK_ISP>,
+					 <&tegra_car 20 /* VI */>,
+					 <&tegra_car TEGRA114_CLK_CSI>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_xusbss: xusba {
+				clocks = <&tegra_car TEGRA114_CLK_XUSB_SS>;
+				resets = <&tegra_car TEGRA114_CLK_XUSB_SS>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_xusbdev: xusbb {
+				clocks = <&tegra_car TEGRA114_CLK_XUSB_DEV>;
+				resets = <&tegra_car 95 /* XUSB DEV */>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+
+			pd_xusbhost: xusbc {
+				clocks = <&tegra_car TEGRA114_CLK_XUSB_HOST>;
+				resets = <&tegra_car TEGRA114_CLK_XUSB_HOST>;
+				power-domains = <&pd_core>;
+				#power-domain-cells = <0>;
+			};
+		};
+
+
+
 	};
 
 	fuse@7000f800 {
